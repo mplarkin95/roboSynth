@@ -1,6 +1,7 @@
 import synthPlayer 
 import threading
 import time, Queue, random
+from mingus.containers import NoteContainer 
 
 
 class synthThread(threading.Thread):
@@ -46,7 +47,7 @@ class autoSynthThread(threading.Thread):
 					sound = 'chord'
 					time = .5
 					play.put([sound,time,note,vel])
-			
+				
 
 
 	
@@ -60,7 +61,9 @@ if __name__ == '__main__':
 	c2.start()
 	c1.start()
 
-	for x in range(0,15):
+	for x in range(0,1):
 		print int(x)
 		action.put(x)
 		time.sleep(.5)
+
+	play.put(['chord',1,NoteContainer().from_chord('C'),120])
