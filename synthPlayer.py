@@ -16,14 +16,10 @@ class player(object):
 		self.bpm = float(bpm)
 		self.me_time = float(240/bpm)  #Set the time in seconds that each measure in 4/4 time takes
 	def play_chord(self,note_length,chord,velocity):
-		if type(chord) is NoteContainer: #If argument is a Mingus NoteContainer object
-			synth.play_NoteContainer(chord,velocity=velocity)
-		else:
-			synth.play_NoteContainer(NoteContainer().from_chord(chord),velocity=velocity) #if it is not create chord from string
+		synth.play_NoteContainer(NoteContainer().from_chord(chord),velocity=velocity) #if it is not create chord from string
 		time.sleep(self.me_time*note_length)
 	def arpegiate_chord(self,note_length,chord,velocity,ascending=False):
-		if type(chord) is not NoteContainer:
-			chord = NoteContainer().from_chord(chord)
+		chord = NoteContainer().from_chord(chord)
 		for x in chord:
 			synth.play_Note(x,velocity=velocity)
 			time.sleep(self.me_time*note_length)
