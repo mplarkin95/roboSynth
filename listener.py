@@ -3,6 +3,7 @@ import pyaudio
 import analyse
 import time
 import sys
+import threading
 
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
@@ -22,53 +23,32 @@ midi_dict = {0:'C', 1:'C#', 2:'D', 3:'D#', 4:'E', 5:'F', 6:'F#', 7:'G', 8:'G#', 
              120:'C', 121:'C#', 122:'D', 123:'D#', 124:'E', 125:'F', 126:'F#', 127:'G'}
 
 
-while True:
-    print "(s)tart"
-    print "(q)uit"
-    answer = raw_input("> ")
-    if answer == 'q':
-        break
-    elif answer == 's':
-        print 'Loudness is in decibels. Typical very loud sounds are -1dB and typical silence is -36dB'
-        print 'Pitch is returned as midi pitch, middle C is 60'
-        print 'Ctrl-c to stop'
-        print 'Opening stream...'
-        time.sleep(5)
+class listenerThread(threading.Thread):
+    """
+    Class that opens an audio stream via pyAudio, and uses SoundAnalyse to find the pitch
+    """
+    def run(self):
+        while True:
 
-        p = pyaudio.PyAudio()
+            p = pyaudio.PyAudio()
 
-        stream = p.open(format=FORMAT,
-                        channels=CHANNELS,
-                        rate=RATE,
-                        input=True)
-        try:
-            while(True):
-                rawsamps = stream.read(CHUNK)
-                samps = numpy.fromstring(rawsamps, dtype=numpy.int16)
+            stream = p.open(format=FORMAT,
+                            channels=CHANNELS,
+                            rate=RATE,
+                            input=True)
 
-                loud = analyse.loudness(samps)
-                if loud is not None:
-                    print "*** LOUDNESS ***"
-                    print loud
-                    print
-                elif loud is None:
-                    print "There must be an issue with input, I am not picking up sound."
-                    break
+            rawsamps = stream.read(CHUNK)
+            samps = numpy.fromstring(rawsamps, dtype=numpy.int16)
 
-                midi = analyse.musical_detect_pitch(samps)
-                if midi is not None:
-                    print "***  MIDI PITCH   ***"
-                    print midi
-                    print
-                    print "*** NOTE ***"
-                    print midi_dict[int(midi)]
-                    print
-        except KeyboardInterrupt:
-            print "Stopped"
-            break
-    else:
-        print "Wrong input!"
+            loud = analyse.loudness(samps)
+            if loud is None:
+                print "There must be an issue with input, I am not picking up sound."
+                break
 
+            midi = analyse.musical_detect_pitch(samps)
+            if midi is not None:
+                print midi_dict[int(midi)]
+                print
 
 
 
