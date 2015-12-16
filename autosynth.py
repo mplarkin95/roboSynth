@@ -48,15 +48,24 @@ class synth_Constructor(object):
 	def update(self,notes):
 		cur_key = self.key
 		self.key=self.key_decider(notes) #update key
+		print self.key
 		if self.key != cur_key:   #if key is updated forget previous chord progression
 			self.chord_prog = self.chord_prog_decider()
 			self.previous_chords = []
+			print 'Key change'
 
 	def player(self):
 		if self.position >= len(self.previous_chords):  #if at end of chord progression start from beggining
 			self.position = 0
 		if len(self.previous_chords) < 8:  #create an 8 chord progression
-			r = random.randint(0,6)
+			r = random.randint(0,15)
+			if r>=0 and r<=4:r= 0
+			elif r>4 and r<=5:r=1
+			elif r>5 and r<=7:r=2
+			elif r>7 and r<=10:r=3
+			elif r>10 and r<=13:r=4
+			elif r>13 and r<=14:r=5
+			elif r>14 and r<=15:r=6 
 			self.previous_chords.append(self.chord_prog[r])
 			return self.chord_prog[r]
 		else:

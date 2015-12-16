@@ -8,7 +8,7 @@ import threading
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 22050
+RATE = 22400
 
 midi_dict = {0:'C', 1:'C#', 2:'D', 3:'D#', 4:'E', 5:'F', 6:'F#', 7:'G', 8:'G#', 9:'A', 10:'A#', 11:'B',
 			12:'C', 13:'C#', 14:'D', 15:'D#', 16:'E', 17:'F', 18:'F#', 19:'G', 20:'G#', 21:'A', 22:'A#', 23:'B',
@@ -30,7 +30,6 @@ class listenerThread(threading.Thread):
 	def run(self):
 		notes_array = [0,0,0,0,0,0,0,0,0,0,0,0]
 		count = 0
-		raw_input("press any key to start")
 		while True:
 
 			p = pyaudio.PyAudio()
@@ -43,11 +42,8 @@ class listenerThread(threading.Thread):
 			rawsamps = stream.read(CHUNK) #read chunk of data into string of sound input
 			samps = numpy.fromstring(rawsamps, dtype=numpy.int16) #convert to numpy interger
 
-			loud = analyse.loudness(samps)  #analyze for loudness
-			if loud is None:
-				print "There must be an issue with input, I am not picking up sound."
-				break
 			midi = analyse.musical_detect_pitch(samps)  #find associated midi pitch and therefore note
+			print midi
 			if midi is not None:
 				note =  midi_dict[int(midi)] #pull note from dictionary and update note array
 				if note == 'A':notes_array[0]+=1
@@ -63,9 +59,10 @@ class listenerThread(threading.Thread):
 				if note == 'G':notes_array[10]+=1
 				if note == 'G#':notes_array[11]+=1
 				count+= 1
-				if count == 50:  #after 50 note samples return array for key recognition
+				if count == 50:  #after 50 note samples return array for key recognitions
 					action.put(notes_array)
 					count = 0
+		return
 
 
 
