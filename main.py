@@ -21,22 +21,19 @@ class synthThread(threading.Thread):
 
 class autoSynthThread(threading.Thread):
 	def run(self):
-		sound = "chord"
+		sound = "chord" #default arguments for player
 		time = .5
 		note = "C"
 		vel = 120
-		a_sy = autosynth.synth_Constructor(bpm)
+		a_sy = autosynth.synth_Constructor(bpm) #initialize synth automoton
 		while True:
 			if not action.empty():
 				item = action.get()
 				if item == "Kill":
 					play.put("Kill")
 					break
-				a_sy.update(item)
-				print 'Current note array: '
-				print item
-				print "current key: "+a_sy.key
-				t = random.randint(0,10)
+				a_sy.update(item) #whenever there is an update of sounds update key and then return sound
+				t = random.randint(0,10)  #generate random int to see if chord is arpegiated
 				if t==7 or t==3:
 					sound = "arp"
 					time = .5/4
@@ -44,7 +41,7 @@ class autoSynthThread(threading.Thread):
 					sound = 'chord'
 					time = .5
 				note = a_sy.player()
-				play.put([sound,time,note,vel])
+				play.put([sound,time,note,vel]) #call actual player function
 				if sound=='arp':
 					sound = 'chord'
 					time = .5/4
@@ -56,12 +53,12 @@ class autoSynthThread(threading.Thread):
 if __name__ == '__main__':
 	print "Testing module"
 	bpm = int(raw_input("enter bpm: "))
-	play = Queue.Queue()
+	play = Queue.Queue()  #initialize queues
 	action = Queue.Queue()
 	c1 = autoSynthThread()
 	c2 = synthThread()
 	c3 = listener.listenerThread()
-	c3.start()
+	c3.start() #start threads
 	c2.start()
 	c1.start()
 

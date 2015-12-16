@@ -27,15 +27,5 @@ class player(object):
 				velocity += 15
 
 
-#TESTING
-# p = player('piano.SF2',60)
-# for x in range(0,5):
-# 	p.play_chord(.25,"G",(50+x*10))
-# 	p.play_chord(.25/2,"C",(50+x*10))
-# 	p.play_chord(.25/2,"C",(50+x*10))
-# p.play_chord(.25,"G",100)
-# p.play_chord(.25,"C",120)
-# p.arpegiate_chord(.5/3, "G",75,ascending=True)
-# p.play_chord(.5,"C",120)
-# time.sleep(2)
+
 
